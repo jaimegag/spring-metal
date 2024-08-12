@@ -32,20 +32,20 @@ This repository contains artifacts necessary to build and run generative AI appl
 ## Installation
 
 ### Cloud Foundry Runtime
-Set up your target environment and create necessary back-end services for the ai demo:
+Set up your target environment and create necessary back-end services for the ai demo; we will only crete services and service-keys on the CF Runtime side:
 
 ```bash
 cf target -o ai-apps -s ai-spring-metal
-cf create-service private-ai-service shared-ai-plan ai-service
+cf create-service private-ai-service model-plan ai-service
 cf create-service-key ai-service ai-key
 cf service-key ai-service ai-key
 cf create-service postgres on-demand-postgres-db pgvector
 cf create-service-key pgvector pg-key
 cf service-key pgvector pg-key
-cf push
 ```
 Notes:
-- if your Cloud Foundry Runtime srrvices are hosted on a private network, you will need to create or update your postgres service with the TCP Router and Service instance gateway.  [Documentation](https://docs.vmware.com/en/VMware-Tanzu-Postgres-for-Tanzu-Application-Service/1.1/postgres/create-service-gateway-instance.html)
+- The GenAI tile v0.5+ plan name is the chat Model you choose to use (e.g: meta-llama/Meta-Llama-3-8B-Instruct). Adjust to a model configured in your GenAI tile.
+- If your Cloud Foundry Runtime services are hosted on a private network, you will need to create or update your postgres service with the TCP Router and Service instance gateway.  [Documentation](https://docs.vmware.com/en/VMware-Tanzu-Postgres-for-Tanzu-Application-Service/1.1/postgres/create-service-gateway-instance.html). Example command in that case: ```cf create-service postgres on-demand-postgres-db pgvector -c '{"svc_gw_enable":  true,"router_group": "default-tcp","external_port": 1028}' -w```
 - The contents of your Kubernetes service secret can be viewed through the service key.  
   
 ### Kubernetes Runtime
@@ -56,7 +56,6 @@ Set up your Kubernetes environment ensuring all prerequisites are met:
 
 ```bash
 tanzu login
-tanzu context use <my-context>
 tanzu project use <my-project>
 tanzu space use <my-space>
 ```
@@ -83,8 +82,7 @@ tanzu deploy --from-build build-output
 Create secrets to external Postgres (with pgvector) and GenAI control apis running on TPCF and bind them as pre-provisioned services 
 
 ```bash
-tanzu context use <my-context>
-kubectl apply -f .tanzu/services
+tanzu deploy --only .tanzu/services
 ```
 
 ### Troubleshooting

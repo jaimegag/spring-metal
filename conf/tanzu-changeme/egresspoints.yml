@@ -13,5 +13,5 @@ spec:
   - hosts:
     - tcp.tas.vmtanzu.com
     port:
-      number: 1024
+      number: 1028
       protocol: TCP
