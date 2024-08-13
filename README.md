@@ -84,6 +84,8 @@ Create secrets to external Postgres (with pgvector) and GenAI control apis runni
 ```bash
 tanzu deploy --only .tanzu/services
 ```
+Notes:
+- After deploying the Service bindings, a new version of the Pod with the bindings in it will be deployed, once it's read the app shoul dbe able to detect the bindings and apply the llm and postgres profiles, leveraging Postgres as the DB for Albums and Embeddings, and activating the chat bot connected to the GenAI tile API.
 
 ### Troubleshooting
 
