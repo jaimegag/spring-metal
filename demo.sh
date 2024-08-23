@@ -10,13 +10,17 @@ GENAI_CHAT_PLAN_NAME="meta-llama/Meta-Llama-3-8B-Instruct" # plan must have chat
 GENAI_EMBEDDINGS_SERVICE_NAME="genai-embed" 
 GENAI_EMBEDDINGS_PLAN_NAME="nomic-embed-text" # plan must have Embeddings capabilty
 
-APP_NAME="spring-metal" # overridable, necessary for TPK8s ingress route
+APP_NAME="dekt-metal" # overridable, necessary for TPK8s ingress route
 
 
 
 case $1 in
-cf)
+prepare-cf)
     
+    echo && printf "\e[37mℹ️  Building $APP_NAME ...\e[m\n" && echo
+
+    mvn clean package -DskipTests
+
     echo && printf "\e[37mℹ️  Creating services ...\e[m\n" && echo
 
     cf create-service postgres $PGVECTOR_PLAN_NAME $PGVECTOR_SERVICE_NAME -c "{\"svc_gw_enable\": true, \"router_group\": \"default-tcp\", \"external_port\": $PGVECTOR_EXTERNAL_PORT}" -w
@@ -33,39 +37,28 @@ cf)
     cf create-service genai $GENAI_CHAT_PLAN_NAME $GENAI_CHAT_SERVICE_NAME 
     cf create-service genai $GENAI_EMBEDDINGS_PLAN_NAME $GENAI_EMBEDDINGS_SERVICE_NAME 
  
-    echo && printf "\e[37mℹ️  Deploying spring-metal application ...\e[m\n" && echo
-    cf push $APP_NAME -f runtime-configs/tpcf/manifest.yml --no-start
-
-    echo && printf "\e[37mℹ️  Binding services ...\e[m\n" && echo
-
-    cf bind-service $APP_NAME $PGVECTOR_SERVICE_NAME
-    cf bind-service $APP_NAME $GENAI_CHAT_SERVICE_NAME
-    cf bind-service $APP_NAME $GENAI_EMBEDDINGS_SERVICE_NAME
-    cf start $APP_NAME
-
     ;;
-
 prepare-k8s)
     echo && printf "\e[35m▶ Creating service keys for GenAI and Postgres \e[m\n" && echo
 
-    cf create-service-key $PGVECTOR_SERVICE_NAME key
-    PGVECTOR_GUID=$(cf service-key $PGVECTOR_SERVICE_NAME key --guid)
+    cf create-service-key $PGVECTOR_SERVICE_NAME external-binding
+    PGVECTOR_GUID=$(cf service-key $PGVECTOR_SERVICE_NAME external-binding --guid)
     PGVECTOR_SERVICE_JSON=$(cf curl "/v3/service_credential_bindings/$PGVECTOR_GUID/details") 
     PGVECTOR_HOST=$(echo -n $PGVECTOR_SERVICE_JSON | jq -r -c '.credentials.service_gateway.host' | base64)
     PGVECTOR_PORT=$(echo -n $PGVECTOR_SERVICE_JSON | jq -r -c '.credentials.service_gateway.port' | base64)
     PGVECTOR_USERNAME=$(echo -n $PGVECTOR_SERVICE_JSON | jq -r -c '.credentials.user' | base64)
     PGVECTOR_PASSWORD=$(echo -n $PGVECTOR_SERVICE_JSON | jq -r -c '.credentials.password'| base64)
 
-    cf create-service-key $GENAI_CHAT_SERVICE_NAME key
-    CHAT_GUID=$(cf service-key $GENAI_CHAT_SERVICE_NAME key --guid)
+    cf create-service-key $GENAI_CHAT_SERVICE_NAME external-binding
+    CHAT_GUID=$(cf service-key $GENAI_CHAT_SERVICE_NAME external-binding --guid)
     CHAT_SERVICE_JSON=$(cf curl "/v3/service_credential_bindings/$CHAT_GUID/details") 
     CHAT_MODEL_CAPABILITIES=$(echo -n $CHAT_SERVICE_JSON | jq -r -c '.credentials.model_capabilities| @csv' | sed 's/\"//g'| base64)
     CHAT_MODEL_NAME=$(echo -n $CHAT_SERVICE_JSON | jq -r -c '.credentials.model_name'| base64)
     CHAT_API_URL=$(echo -n $CHAT_SERVICE_JSON | jq -r -c '.credentials.api_base'| base64)
     CHAT_API_KEY=$(echo -n $CHAT_SERVICE_JSON | jq -r -c '.credentials.api_key'| base64)
 
-    cf create-service-key $GENAI_EMBEDDINGS_SERVICE_NAME key
-    EMBED_GUID=$(cf service-key $GENAI_EMBEDDINGS_SERVICE_NAME key --guid)
+    cf create-service-key $GENAI_EMBEDDINGS_SERVICE_NAME external-binding
+    EMBED_GUID=$(cf service-key $GENAI_EMBEDDINGS_SERVICE_NAME external-binding --guid)
     EMBED_SERVICE_JSON=$(cf curl "/v3/service_credential_bindings/$EMBED_GUID/details") 
     EMBED_MODEL_CAPABILITIES=$(echo -n $EMBED_SERVICE_JSON | jq -r -c '.credentials.model_capabilities| @csv' | sed 's/\"//g'| base64)
     EMBED_MODEL_NAME=$(echo -n $EMBED_SERVICE_JSON | jq -r -c '.credentials.model_name'| base64)
@@ -107,8 +100,19 @@ prepare-k8s)
     rm .tanzu/config/*.bak
 
     ;;
+deploy-cf)
 
-k8s)
+    echo && printf "\e[37mℹ️  Deploying spring-metal application ...\e[m\n" && echo
+    cf push $APP_NAME -f runtime-configs/tpcf/manifest.yml --no-start
+
+    echo && printf "\e[37mℹ️  Binding services ...\e[m\n" && echo
+
+    cf bind-service $APP_NAME $PGVECTOR_SERVICE_NAME
+    cf bind-service $APP_NAME $GENAI_CHAT_SERVICE_NAME
+    cf bind-service $APP_NAME $GENAI_EMBEDDINGS_SERVICE_NAME
+    cf start $APP_NAME
+    ;;
+deploy-k8s)
     echo && printf "\e[35m▶ tanzu deploy and bind \e[m\n" && echo
     tanzu deploy -y
     
@@ -121,6 +125,6 @@ cleanup)
     kubectl delete -f .tanzu/config
     ;;
 *)
-    echo && printf "\e[31m⏹  Usage: cf/prepare-k8s/k8s/cleanup \e[m\n" && echo
+    echo && printf "\e[31m⏹  Usage: prepare-cf/prepare-k8s/deploy-cf/deploy-k8s/cleanup \e[m\n" && echo
     ;;
 esac

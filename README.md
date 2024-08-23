@@ -36,24 +36,25 @@ GENAI_EMBEDDINGS_SERVICE_NAME="genai-embed"
 GENAI_EMBEDDINGS_PLAN_NAME="nomic-embed-text" # plan must have Embeddings capabilty
 ```
 
-#### Build
-
-```bash
-mvn clean package -DskipTests
-```
-
-#### Deployment
-Run the demo script to create all services and push the spring-metal application
+Run the prepare script to build spring-metal and create all services
 
 ```bash
 cf login -u admin -p YOUR_CF_ADMIN_PASSWORD
 cf target -o YOUR_ORG -s YOUR_SPACE
 
-./demo.sh cf
+./demo.sh prepare-cf
 ```
-Notes:
-- if your Cloud Foundry Runtime srrvices are hosted on a private network, you will need to create or update your postgres service with the TCP Router and Service instance gateway.  [Documentation](https://docs.vmware.com/en/VMware-Tanzu-Postgres-for-Tanzu-Application-Service/1.1/postgres/create-service-gateway-instance.html)
-- The contents of your Kubernetes service secret can be viewed through the service key.  
+
+#### Deployment
+
+Run the deploy script to push spring-metal and bind all services
+
+```bash
+cf login -u admin -p YOUR_CF_ADMIN_PASSWORD
+cf target -o YOUR_ORG -s YOUR_SPACE
+
+./demo.sh deploy-cf
+```
   
 ### Kubernetes Runtime
 
@@ -76,7 +77,7 @@ export KUBECONFIG=~/.config/tanzu/kube/config
 
 ```bash
 
-./demo.sh k8s
+./demo.sh deploy-k8s
 ```
 
 #### Deployment - step by step
