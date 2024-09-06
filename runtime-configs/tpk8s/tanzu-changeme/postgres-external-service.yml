@@ -24,3 +24,9 @@ spec:
     type: postgresql
     secretRef:
       name: pgvector-creds
+    egressPointTemplate:
+      targets:
+        - hosts: ["CHANGE_ME"]
+          port:
+            number: CHANGE_ME
+            protocol: TCP

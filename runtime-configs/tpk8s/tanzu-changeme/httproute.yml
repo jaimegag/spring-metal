@@ -8,10 +8,9 @@ metadata:
     healthcheck.gslb.tanzu.vmware.com/port: "8080"
 spec:
   parentRefs:
-  - group: gateway.networking.k8s.io
-    kind: Gateway
-    name: default-gateway
-    sectionName: http-CHANGE_ME
+  - group: networking.tanzu.vmware.com
+    kind: Entrypoint
+    name: main
   rules:
   - backendRefs:
     - group: ""

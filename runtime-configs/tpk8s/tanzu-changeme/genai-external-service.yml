@@ -18,6 +18,12 @@ spec:
   bindingConnectors:
   - name: main
     description: Gen AI credentials
-    type: ai
+    type: openai
     secretRef:
       name: genai-creds
+    egressPointTemplate:
+      targets:
+        - hosts: ["CHANGE_ME"]
+          port:
+            number: CHANGE_ME
+            protocol: TCP
