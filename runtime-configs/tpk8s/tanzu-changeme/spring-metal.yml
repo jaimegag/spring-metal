@@ -6,6 +6,9 @@ metadata:
 spec:
   build:
     buildpacks: {}
+    nonSecretEnv:
+    - name: BP_JVM_VERSION
+      value: "17"
     path: ../..
   ports:
   - name: main
