@@ -122,7 +122,6 @@ cleanup)
     cf delete-service $GENAI_CHAT_SERVICE_NAME -f
     cf delete-service $GENAI_EMBEDDINGS_SERVICE_NAME -f
     cf delete $APP_NAME -f -r
-    kubectl delete -f .tanzu/config
     ;;
 *)
     echo && printf "\e[31m⏹  Usage: prepare-cf/prepare-k8s/deploy-cf/deploy-k8s/cleanup \e[m\n" && echo
