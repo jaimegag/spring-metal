@@ -9,7 +9,7 @@ spec:
     apiGroup: services.tanzu.vmware.com
     connectorName: main
     kind: PreProvisionedService
-    name: genai-chat
+    name: private-chat
   targetRef:
     apiGroup: apps.tanzu.vmware.com
     kind: ContainerApp
@@ -27,7 +27,7 @@ spec:
     apiGroup: services.tanzu.vmware.com
     connectorName: main
     kind: PreProvisionedService
-    name: genai-embed
+    name: private-embeddings
   targetRef:
     apiGroup: apps.tanzu.vmware.com
     kind: ContainerApp

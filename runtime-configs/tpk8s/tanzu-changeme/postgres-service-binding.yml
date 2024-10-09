@@ -9,7 +9,7 @@ spec:
     apiGroup: services.tanzu.vmware.com
     connectorName: main
     kind: PreProvisionedService
-    name: pgvector
+    name: vector-db
   targetRef:
     apiGroup: apps.tanzu.vmware.com
     kind: ContainerApp

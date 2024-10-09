@@ -16,7 +16,7 @@ type: servicebinding.io/postgresql
 apiVersion: services.tanzu.vmware.com/v1
 kind: PreProvisionedService
 metadata:
-  name: pgvector
+  name: vector-db
 spec:
   bindingConnectors:
   - name: main

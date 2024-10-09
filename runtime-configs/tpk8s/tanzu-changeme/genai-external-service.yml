@@ -15,7 +15,7 @@ type: servicebinding.io/ai
 apiVersion: services.tanzu.vmware.com/v1
 kind: PreProvisionedService
 metadata:
-  name: genai-chat
+  name: private-chat
 spec:
   bindingConnectors:
   - name: main
@@ -41,7 +41,7 @@ type: servicebinding.io/ai
 apiVersion: services.tanzu.vmware.com/v1
 kind: PreProvisionedService
 metadata:
-  name: genai-embed
+  name: private-embeddings
 spec:
   bindingConnectors:
   - name: main
