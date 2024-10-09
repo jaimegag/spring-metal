@@ -9,7 +9,7 @@ data:
   type: cG9zdGdyZXNxbAo= # postgresql
 kind: Secret
 metadata:
-  name: pgvector-creds
+  name: vector-db-creds
 type: servicebinding.io/postgresql
 
 ---
@@ -23,4 +23,4 @@ spec:
     description: Posgres pgvector service for AI use cases
     type: postgresql
     secretRef:
-      name: pgvector-creds
+      name: vector-db-creds

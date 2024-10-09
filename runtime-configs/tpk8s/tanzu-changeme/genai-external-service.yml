@@ -8,7 +8,7 @@ data:
   type: Z2VuYWk=  # genai
 kind: Secret
 metadata:
-  name: genai-chat-creds
+  name: private-chat-creds
 type: servicebinding.io/ai
 
 ---
@@ -22,7 +22,7 @@ spec:
     description: Gen AI credentials
     type: genai
     secretRef:
-      name: genai-chat-creds
+      name: private-chat-creds
 ---
 apiVersion: v1
 data:
@@ -34,7 +34,7 @@ data:
   type: Z2VuYWk=  # genai
 kind: Secret
 metadata:
-  name: genai-embed-creds
+  name: private-embed-creds
 type: servicebinding.io/ai
 
 ---
@@ -48,4 +48,4 @@ spec:
     description: Gen AI credentials
     type: genai
     secretRef:
-      name: genai-embed-creds
+      name: private-embed-creds
