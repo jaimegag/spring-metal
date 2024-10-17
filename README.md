@@ -65,49 +65,19 @@ cf target -o YOUR_ORG -s YOUR_SPACE
 - Template the Kubernetes services and bindings
 
 ```bash
+tanzu build config --build-plan-source-type=file  --containerapp-registry [YOUR CONTAINER REGISTRY]  --build-plan-source [FULL PATH TO spring-metal folder]/.tanzu/build-plan.yaml
+./demo.sh prepare-k8s [YOUR REGISTERY at harbor.vmtanzu.com]
+```
+
+#### Build and Deploy 
+```bash
 tanzu login
 tanzu context use <my-context>
 tanzu project use <my-project>
 tanzu space use <my-space>
-export KUBECONFIG=~/.config/tanzu/kube/config 
-./demo.sh prepare-k8s
+tanzu deploy
 ```
-
-#### Deployment - all in one
-
-```bash
-
-./demo.sh deploy-k8s
-```
-
-#### Deployment - step by step
-
-##### Build
-
-Follow these commands to build your application:
-
-```bash
-tanzu build config --containerapp-registry [YOUR CONTAINER REGISTRY] 
-tanzu build -o build-output
-```
-
-##### Deploy
-
-Follow these commands to deploy your application from the build-output folder:
-
-```bash
-tanzu deploy --from-build build-output
-```
-
-##### Bind
-
-#### Create and bind the pre-provisioned services :
-Create secrets to external Postgres (with pgvector) and GenAI control apis running on TPCF and bind them as pre-provisioned services 
-
-```bash
-tanzu context use <my-context>
-kubectl apply -f .tanzu/services
-```
+note: AI and db external services are bound as part of the deployment. You can bind to on-cluster services by using ```tanzu service create```
 
 ### Cleanup
 

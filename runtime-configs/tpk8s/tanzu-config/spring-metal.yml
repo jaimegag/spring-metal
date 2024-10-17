@@ -1,8 +1,7 @@
 apiVersion: apps.tanzu.vmware.com/v1
 kind: ContainerApp
 metadata:
-  creationTimestamp: null
-  name: CHANGE_ME
+  name: APP_NAME
 spec:
   build:
     buildpacks: {}

@@ -1,7 +1,7 @@
 apiVersion: services.tanzu.vmware.com/v1
 kind: ServiceBinding
 metadata:
-  name: private-chat-CHANGE_ME
+  name: private-chat-APP_NAME
   namespace: default
 spec:
   alias: ai-chat
@@ -13,13 +13,13 @@ spec:
   targetRef:
     apiGroup: apps.tanzu.vmware.com
     kind: ContainerApp
-    name: CHANGE_ME
+    name: APP_NAME
 
 ---
 apiVersion: services.tanzu.vmware.com/v1
 kind: ServiceBinding
 metadata:
-  name: private-embed-CHANGE_ME
+  name: private-embed-APP_NAME
   namespace: default
 spec:
   alias: ai-embed
@@ -31,4 +31,4 @@ spec:
   targetRef:
     apiGroup: apps.tanzu.vmware.com
     kind: ContainerApp
-    name: CHANGE_ME
+    name: APP_NAME

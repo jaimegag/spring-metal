@@ -5,10 +5,10 @@ PGVECTOR_PLAN_NAME="on-demand-postgres-db"
 PGVECTOR_EXTERNAL_PORT=1025
 
 GENAI_CHAT_SERVICE_NAME="genai-chat" 
-GENAI_CHAT_PLAN_NAME="meta-llama/Meta-Llama-3-8B-Instruct" # plan must have chat capabilty
+GENAI_CHAT_PLAN_NAME="gpt-4o" # plan must have chat capabilty
 
 GENAI_EMBEDDINGS_SERVICE_NAME="genai-embed" 
-GENAI_EMBEDDINGS_PLAN_NAME="nomic-embed-text" # plan must have Embeddings capabilty
+GENAI_EMBEDDINGS_PLAN_NAME="text-embedding-3-small" # plan must have Embeddings capabilty
 
 APP_NAME="boneyard-assist" # overridable, necessary for TPK8s ingress route
 
@@ -65,13 +65,17 @@ prepare-k8s)
     EMBED_API_URL=$(echo -n $EMBED_SERVICE_JSON | jq -r -c '.credentials.api_base'| base64)
     EMBED_API_KEY=$(echo -n $EMBED_SERVICE_JSON | jq -r -c '.credentials.api_key'| base64)
 
-    echo && printf "\e[35m▶ Copying and templating runtime-configs/tpk8s/tanzu-changeme to .tanzu/config and .tanzu/config \e[m\n" && echo
+    echo && printf "\e[35m▶ Copying and templating runtime-configs/tpk8s/tanzu-config to .tanzu and .tanzu/config \e[m\n" && echo
 
     rm -rf .tanzu/config
     mkdir -p .tanzu/config
 
-    sed "s/CHANGE_ME/$APP_NAME/g" runtime-configs/tpk8s/tanzu-changeme/spring-metal.yml > .tanzu/config/spring-metal.yml
-    sed "s/CHANGE_ME/$APP_NAME/g" runtime-configs/tpk8s/tanzu-changeme/httproute.yml > .tanzu/config/httproute.yml
+    sed "s/APP_NAME/$APP_NAME/g" runtime-configs/tpk8s/tanzu-config/build-plan.yml > .tanzu//build-plan.yml
+    sed "s/IMG_REGISTRY/harbor.vmtanzu.com\/$2/g" runtime-configs/tpk8s/tanzu-config/build-plan.yml > .tanzu//build-plan.yml
+
+    sed "s/APP_NAME/$APP_NAME/g" runtime-configs/tpk8s/tanzu-config/spring-metal.yml > .tanzu/config/spring-metal.yml
+    sed "s/APP_NAME/$APP_NAME/g" runtime-configs/tpk8s/tanzu-config/httproute.yml > .tanzu/config/httproute.yml
+   
 
     if [[ "$OSTYPE" == "darwin"* ]]; then
         SED_INPLACE_COMMAND="sed -i.bak"
@@ -79,7 +83,7 @@ prepare-k8s)
         SED_INPLACE_COMMAND="sed -i"
     fi
       
-    sed "s/CHAT_MODEL_CAPABILITIES/$CHAT_MODEL_CAPABILITIES/" runtime-configs/tpk8s/tanzu-changeme/genai-external-service.yml > .tanzu/config/genai-external-service.yml
+    sed "s/CHAT_MODEL_CAPABILITIES/$CHAT_MODEL_CAPABILITIES/" runtime-configs/tpk8s/tanzu-config/genai-external-service.yml > .tanzu/config/genai-external-service.yml
     $SED_INPLACE_COMMAND "s|CHAT_MODEL_NAME|$CHAT_MODEL_NAME|" .tanzu/config/genai-external-service.yml 
     $SED_INPLACE_COMMAND "s|CHAT_API_URL|$CHAT_API_URL|" .tanzu/config/genai-external-service.yml 
     $SED_INPLACE_COMMAND "s|CHAT_API_KEY|$CHAT_API_KEY|" .tanzu/config/genai-external-service.yml 
@@ -88,14 +92,14 @@ prepare-k8s)
     $SED_INPLACE_COMMAND "s|EMBED_API_URL|$EMBED_API_URL|" .tanzu/config/genai-external-service.yml 
     $SED_INPLACE_COMMAND "s|EMBED_API_KEY|$EMBED_API_KEY|" .tanzu/config/genai-external-service.yml 
     
-    sed "s/CHANGE_ME/$APP_NAME/" runtime-configs/tpk8s/tanzu-changeme/genai-service-binding.yml > .tanzu/config/genai-service-binding.yml
+    sed "s/APP_NAME/$APP_NAME/" runtime-configs/tpk8s/tanzu-config/genai-service-binding.yml > .tanzu/config/genai-service-binding.yml
 
-    sed "s/PGVECTOR_HOST/$PGVECTOR_HOST/" runtime-configs/tpk8s/tanzu-changeme/postgres-external-service.yml > .tanzu/config/postgres-external-service.yml
+    sed "s/PGVECTOR_HOST/$PGVECTOR_HOST/" runtime-configs/tpk8s/tanzu-config/postgres-external-service.yml > .tanzu/config/postgres-external-service.yml
     $SED_INPLACE_COMMAND "s/PGVECTOR_PORT/$PGVECTOR_PORT/" .tanzu/config/postgres-external-service.yml
     $SED_INPLACE_COMMAND "s/PGVECTOR_USERNAME/$PGVECTOR_USERNAME/" .tanzu/config/postgres-external-service.yml
     $SED_INPLACE_COMMAND "s|PGVECTOR_PASSWORD|$PGVECTOR_PASSWORD|" .tanzu/config/postgres-external-service.yml
 
-    sed "s/CHANGE_ME/$APP_NAME/" runtime-configs/tpk8s/tanzu-changeme/postgres-service-binding.yml > .tanzu/config/postgres-service-binding.yml
+    sed "s/APP_NAME/$APP_NAME/" runtime-configs/tpk8s/tanzu-config/postgres-service-binding.yml > .tanzu/config/postgres-service-binding.yml
 
     rm .tanzu/config/*.bak
 
