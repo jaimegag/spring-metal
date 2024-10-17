@@ -11,35 +11,8 @@
     {
         "_class": "org.cloudfoundry.samples.music.domain.Album",
         "artist": "Black Sabbath",
-        "title": "Paranoid",
-        "releaseYear": "1970",
-        "genre": "Heavy Metal",
-        "userReview": "",
-        "userScore": ""
-    },
-    {
-        "_class": "org.cloudfoundry.samples.music.domain.Album",
-        "artist": "Black Sabbath",
         "title": "Master of Reality",
         "releaseYear": "1971",
-        "genre": "Heavy Metal",
-        "userReview": "",
-        "userScore": ""
-    },
-    {
-        "_class": "org.cloudfoundry.samples.music.domain.Album",
-        "artist": "Black Sabbath",
-        "title": "Vol. 4",
-        "releaseYear": "1975",
-        "genre": "Heavy Metal",
-        "userReview": "",
-        "userScore": ""
-    },
-    {
-        "_class": "org.cloudfoundry.samples.music.domain.Album",
-        "artist": "Black Sabbath",
-        "title": "Sabotage",
-        "releaseYear": "2014",
         "genre": "Heavy Metal",
         "userReview": "",
         "userScore": ""
@@ -55,38 +28,56 @@
     },
     {
         "_class": "org.cloudfoundry.samples.music.domain.Album",
-        "artist": "Ozzy Osbourne",
-        "title": "Blizzard of Ozz",
-        "releaseYear": "1980",
-        "genre": "Heavy Metal",
-        "userReview": "",
-        "userScore": ""
-    },
-    {
-        "_class": "org.cloudfoundry.samples.music.domain.Album",
-        "artist": "Metallica",
-        "title": "Kill 'Em All",
-        "releaseYear": "1983",
-        "genre": "Heavy Metal",
-        "userReview": "",
-        "userScore": ""
-    },
-    {
-        "_class": "org.cloudfoundry.samples.music.domain.Album",
-        "artist": "Metallica",
-        "title": "Ride the Lighting",
-        "releaseYear": "1984",
-        "genre": "Heavy Metal",
-        "userReview": "",
-        "userScore": ""
-    },
-    {
-        "_class": "org.cloudfoundry.samples.music.domain.Album",
         "artist": "Metallica",
         "title": "...And Justice for All",
         "releaseYear": "1988",
         "genre": "Heavy Metal",
         "userReview": "",
+        "userScore": ""
+    },
+    {
+        "_class": "org.cloudfoundry.samples.music.domain.Album",
+        "artist": "Iron Maiden",
+        "title": "The Number of the Beast",
+        "releaseYear": "1982",
+        "genre": "Heavy Metal",
+        "userReview": "",
+        "userScore": ""
+    },
+    {
+        "_class": "org.cloudfoundry.samples.music.domain.Album",
+        "artist": "Ozzy Osbourne",
+        "title": "Blizzard of Ozz",
+        "releaseYear": "1980",
+        "genre": "Metal",
+        "userReview": "",
+        "userScore": ""
+    },
+    {
+        "_class": "org.cloudfoundry.samples.music.domain.Album",
+        "artist": "Rage Against the Machine",
+        "title": "Rage Against the Machine",
+        "releaseYear": "1992",
+        "genre": "Rap Metal",
+        "userReview": "",
+        "userScore": ""
+    },
+    {
+        "_class": "org.cloudfoundry.samples.music.domain.Album",
+        "artist": "Dio",
+        "title": "Holy Diver",
+        "releaseYear": "1983",
+        "genre": "Metal",
+        "userReview": "",
+        "userScore": ""
+    },
+    {
+        "_class": "org.cloudfoundry.samples.music.domain.Album",
+        "artist": "Rainbow",
+        "title": "Ritchie Blackmore's Rainbow",
+        "releaseYear": "",
+        "genre": "Hard Rock",
+        "userReview": "1975",
         "userScore": ""
     }
 ]

@@ -30,10 +30,10 @@ PGVECTOR_PLAN_NAME="on-demand-postgres-db"
 PGVECTOR_EXTERNAL_PORT=1025 # Need TCP Router on the TPCF foundation enabled, and Service Gateways on the Postgres tile enabled.  Choose an available port 
 
 GENAI_CHAT_SERVICE_NAME="genai-chat" 
-GENAI_CHAT_PLAN_NAME="meta-llama/Meta-Llama-3-8B-Instruct" # plan must have chat capabilty
+GENAI_CHAT_PLAN_NAME="dev-chat" # plan must have chat capabilty
 
 GENAI_EMBEDDINGS_SERVICE_NAME="genai-embed" 
-GENAI_EMBEDDINGS_PLAN_NAME="nomic-embed-text" # plan must have Embeddings capabilty
+GENAI_EMBEDDINGS_PLAN_NAME="dev-embeddings" # plan must have Embeddings capabilty
 ```
 
 Run the prepare script to build spring-metal and create all services

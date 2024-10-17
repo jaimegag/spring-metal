@@ -5,10 +5,10 @@ PGVECTOR_PLAN_NAME="on-demand-postgres-db"
 PGVECTOR_EXTERNAL_PORT=1025
 
 GENAI_CHAT_SERVICE_NAME="genai-chat" 
-GENAI_CHAT_PLAN_NAME="gpt-4o" # plan must have chat capabilty
+GENAI_CHAT_PLAN_NAME="dev-chat" # plan must have chat capabilty
 
 GENAI_EMBEDDINGS_SERVICE_NAME="genai-embed" 
-GENAI_EMBEDDINGS_PLAN_NAME="text-embedding-3-small" # plan must have Embeddings capabilty
+GENAI_EMBEDDINGS_PLAN_NAME="dev-embeddings" # plan must have Embeddings capabilty
 
 APP_NAME="boneyard-assist" # overridable, necessary for TPK8s ingress route
 
