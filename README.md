@@ -65,7 +65,7 @@ cf target -o YOUR_ORG -s YOUR_SPACE
 - Template the Kubernetes services and bindings
 
 ```bash
-tanzu build config --build-plan-source-type=file  --containerapp-registry [YOUR CONTAINER REGISTRY]  --build-plan-source [FULL PATH TO spring-metal folder]/.tanzu/build-plan.yaml
+tanzu build config --build-plan-source-type=file  --build-plan-source [FULL PATH TO spring-metal folder]/.tanzu/build-plan.yaml]
 ./demo.sh prepare-k8s [YOUR REGISTERY at harbor.vmtanzu.com]
 ```
 
