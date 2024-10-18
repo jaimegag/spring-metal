@@ -9,7 +9,7 @@ PGVECTOR_EXTERNAL_PORT=1111
 GENAI_CHAT_SERVICE_NAME="genai-chat" 
 GENAI_CHAT_PLAN_NAME="chat-test-compute-constraint" # plan must have chat capabilty
 
-GENAI_EMBEDDINGS_SERVICE_NAME="geani-embeddings" 
+GENAI_EMBEDDINGS_SERVICE_NAME="genai-embeddings" 
 GENAI_EMBEDDINGS_PLAN_NAME="embeddings-test" # plan must have Embeddings capabilty
 
 
