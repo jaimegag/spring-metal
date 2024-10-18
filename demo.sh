@@ -1,17 +1,16 @@
 #!/usr/bin/env bash
 
-PGVECTOR_SERVICE_NAME="vector-db"
-PGVECTOR_PLAN_NAME="on-demand-postgres-db"
-PGVECTOR_EXTERNAL_PORT=1025
-
-GENAI_CHAT_SERVICE_NAME="genai-chat" 
-GENAI_CHAT_PLAN_NAME="dev-chat" # plan must have chat capabilty
-
-GENAI_EMBEDDINGS_SERVICE_NAME="genai-embed" 
-GENAI_EMBEDDINGS_PLAN_NAME="dev-embeddings" # plan must have Embeddings capabilty
-
 APP_NAME="boneyard-assist" # overridable, necessary for TPK8s ingress route
 
+PGVECTOR_SERVICE_NAME="vector-db"
+PGVECTOR_PLAN_NAME="on-demand-postgres-db"
+PGVECTOR_EXTERNAL_PORT=1111
+
+GENAI_CHAT_SERVICE_NAME="genai-chat" 
+GENAI_CHAT_PLAN_NAME="chat-test-compute-constraint" # plan must have chat capabilty
+
+GENAI_EMBEDDINGS_SERVICE_NAME="geani-embeddings" 
+GENAI_EMBEDDINGS_PLAN_NAME="embeddings-test" # plan must have Embeddings capabilty
 
 
 case $1 in
@@ -23,7 +22,8 @@ prepare-cf)
 
     echo && printf "\e[37mℹ️  Creating services ...\e[m\n" && echo
 
-    cf create-service postgres $PGVECTOR_PLAN_NAME $PGVECTOR_SERVICE_NAME -c "{\"svc_gw_enable\": true, \"router_group\": \"default-tcp\", \"external_port\": $PGVECTOR_EXTERNAL_PORT}" -w
+    #cf create-service postgres $PGVECTOR_PLAN_NAME $PGVECTOR_SERVICE_NAME -c "{\"svc_gw_enable\": true, \"router_group\": \"default-tcp\", \"external_port\": $PGVECTOR_EXTERNAL_PORT}" -w
+    cf create-service postgres $PGVECTOR_PLAN_NAME $PGVECTOR_SERVICE_NAME -w
 	printf "Waiting for service $PGVECTOR_SERVICE_NAME to create."
 	while [ `cf services | grep 'in progress' | wc -l | sed 's/ //g'` != 0 ]; do
   		printf "."

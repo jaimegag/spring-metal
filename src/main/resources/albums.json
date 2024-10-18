@@ -11,6 +11,15 @@
     {
         "_class": "org.cloudfoundry.samples.music.domain.Album",
         "artist": "Black Sabbath",
+        "title": "Paranoid",
+        "releaseYear": "",
+        "genre": "Heavy Metal",
+        "userReview": "1975",
+        "userScore": ""
+    },
+    {
+        "_class": "org.cloudfoundry.samples.music.domain.Album",
+        "artist": "Black Sabbath",
         "title": "Master of Reality",
         "releaseYear": "1971",
         "genre": "Heavy Metal",
