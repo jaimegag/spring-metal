@@ -4,7 +4,6 @@ APP_NAME="boneyard-assist" # overridable, necessary for TPK8s ingress route
 
 PGVECTOR_SERVICE_NAME="vector-db"
 PGVECTOR_PLAN_NAME="on-demand-postgres-db"
-PGVECTOR_EXTERNAL_PORT=1111
 
 CHAT_SERVICE_NAME="genai-chat" 
 CHAT_PLAN_NAME="chat-test-compute-constraint" # plan must have chat capabilty
@@ -27,8 +26,7 @@ prepare-cf)
 
     echo && printf "\e[37mℹ️  Creating services ...\e[m\n" && echo
 
-    #cf create-service postgres $PGVECTOR_PLAN_NAME $PGVECTOR_SERVICE_NAME -c "{\"svc_gw_enable\": true, \"router_group\": \"default-tcp\", \"external_port\": $PGVECTOR_EXTERNAL_PORT}" -w
-    cf create-service postgres $PGVECTOR_PLAN_NAME $PGVECTOR_SERVICE_NAME -w
+    cf create-service postgres $PGVECTOR_PLAN_NAME $PGVECTOR_SERVICE_NAME -c "{\"svc_gw_enable\": true}" -w
 	printf "Waiting for service $PGVECTOR_SERVICE_NAME to create."
 	while [ `cf services | grep 'in progress' | wc -l | sed 's/ //g'` != 0 ]; do
   		printf "."
