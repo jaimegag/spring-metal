@@ -1,7 +1,7 @@
 apiVersion: build.tanzu.vmware.com/v1
 kind: ContainerAppBuildPlan
 metadata:
-  name: APP_NAME-build-plan
+  name: APP_NAME
   namespace: default
 spec:
   buildpacks:

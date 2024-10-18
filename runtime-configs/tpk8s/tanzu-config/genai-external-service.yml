@@ -8,21 +8,21 @@ data:
   type: Z2VuYWk=  # genai
 kind: Secret
 metadata:
-  name: private-chat-creds
+  name: CHAT_SERVICE_NAME-creds
 type: servicebinding.io/ai
 
 ---
 apiVersion: services.tanzu.vmware.com/v1
 kind: PreProvisionedService
 metadata:
-  name: private-chat
+  name: CHAT_SERVICE_NAME
 spec:
   bindingConnectors:
   - name: main
     description: Gen AI credentials
     type: genai
     secretRef:
-      name: private-chat-creds
+      name: CHAT_SERVICE_NAME-creds
 ---
 apiVersion: v1
 data:
@@ -34,18 +34,18 @@ data:
   type: Z2VuYWk=  # genai
 kind: Secret
 metadata:
-  name: private-embed-creds
+  name: EMBEDDINGS_SERVICE_NAME-creds
 type: servicebinding.io/ai
 
 ---
 apiVersion: services.tanzu.vmware.com/v1
 kind: PreProvisionedService
 metadata:
-  name: private-embeddings
+  name: EMBEDDINGS_SERVICE_NAME
 spec:
   bindingConnectors:
   - name: main
     description: Gen AI credentials
     type: genai
     secretRef:
-      name: private-embed-creds
+      name: EMBEDDINGS_SERVICE_NAME-creds

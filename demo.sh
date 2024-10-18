@@ -6,12 +6,17 @@ PGVECTOR_SERVICE_NAME="vector-db"
 PGVECTOR_PLAN_NAME="on-demand-postgres-db"
 PGVECTOR_EXTERNAL_PORT=1111
 
-GENAI_CHAT_SERVICE_NAME="genai-chat" 
-GENAI_CHAT_PLAN_NAME="chat-test-compute-constraint" # plan must have chat capabilty
+CHAT_SERVICE_NAME="genai-chat" 
+CHAT_PLAN_NAME="chat-test-compute-constraint" # plan must have chat capabilty
 
-GENAI_EMBEDDINGS_SERVICE_NAME="genai-embeddings" 
-GENAI_EMBEDDINGS_PLAN_NAME="embeddings-test" # plan must have Embeddings capabilty
+EMBEDDINGS_SERVICE_NAME="genai-embeddings" 
+EMBEDDINGS_PLAN_NAME="embeddings-test" # plan must have Embeddings capabilty
 
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    SED_INPLACE_COMMAND="sed -i.bak"
+else
+    SED_INPLACE_COMMAND="sed -i"
+fi
 
 case $1 in
 prepare-cf)
@@ -32,10 +37,10 @@ prepare-cf)
 
 	echo "$PGVECTOR_SERVICE_NAME creation completed."
  
-	echo && printf "\e[37mℹ️  Creating $GENAI_CHAT_SERVICE_NAME and $GENAI_EMBEDDINGS_SERVICE_NAME GenAI services ...\e[m\n" && echo
+	echo && printf "\e[37mℹ️  Creating $CHAT_SERVICE_NAME and $EMBEDDINGS_SERVICE_NAME GenAI services ...\e[m\n" && echo
 
-    cf create-service genai $GENAI_CHAT_PLAN_NAME $GENAI_CHAT_SERVICE_NAME 
-    cf create-service genai $GENAI_EMBEDDINGS_PLAN_NAME $GENAI_EMBEDDINGS_SERVICE_NAME 
+    cf create-service genai $CHAT_PLAN_NAME $CHAT_SERVICE_NAME 
+    cf create-service genai $EMBEDDINGS_PLAN_NAME $EMBEDDINGS_SERVICE_NAME 
  
     ;;
 prepare-k8s)
@@ -55,16 +60,16 @@ prepare-k8s)
     PGVECTOR_USERNAME=$(echo -n $PGVECTOR_SERVICE_JSON | jq -r -c '.credentials.user' | base64)
     PGVECTOR_PASSWORD=$(echo -n $PGVECTOR_SERVICE_JSON | jq -r -c '.credentials.password'| base64)
 
-    cf create-service-key $GENAI_CHAT_SERVICE_NAME external-binding
-    CHAT_GUID=$(cf service-key $GENAI_CHAT_SERVICE_NAME external-binding --guid)
+    cf create-service-key $CHAT_SERVICE_NAME external-binding
+    CHAT_GUID=$(cf service-key $CHAT_SERVICE_NAME external-binding --guid)
     CHAT_SERVICE_JSON=$(cf curl "/v3/service_credential_bindings/$CHAT_GUID/details") 
     CHAT_MODEL_CAPABILITIES=$(echo -n $CHAT_SERVICE_JSON | jq -r -c '.credentials.model_capabilities| @csv' | sed 's/\"//g'| base64)
     CHAT_MODEL_NAME=$(echo -n $CHAT_SERVICE_JSON | jq -r -c '.credentials.model_name'| base64)
     CHAT_API_URL=$(echo -n $CHAT_SERVICE_JSON | jq -r -c '.credentials.api_base'| base64)
     CHAT_API_KEY=$(echo -n $CHAT_SERVICE_JSON | jq -r -c '.credentials.api_key'| base64)
 
-    cf create-service-key $GENAI_EMBEDDINGS_SERVICE_NAME external-binding
-    EMBED_GUID=$(cf service-key $GENAI_EMBEDDINGS_SERVICE_NAME external-binding --guid)
+    cf create-service-key $EMBEDDINGS_SERVICE_NAME external-binding
+    EMBED_GUID=$(cf service-key $EMBEDDINGS_SERVICE_NAME external-binding --guid)
     EMBED_SERVICE_JSON=$(cf curl "/v3/service_credential_bindings/$EMBED_GUID/details") 
     EMBED_MODEL_CAPABILITIES=$(echo -n $EMBED_SERVICE_JSON | jq -r -c '.credentials.model_capabilities| @csv' | sed 's/\"//g'| base64)
     EMBED_MODEL_NAME=$(echo -n $EMBED_SERVICE_JSON | jq -r -c '.credentials.model_name'| base64)
@@ -77,37 +82,41 @@ prepare-k8s)
     mkdir -p .tanzu/config
 
     sed "s/APP_NAME/$APP_NAME/g" runtime-configs/tpk8s/tanzu-config/build-plan.yml > .tanzu//build-plan.yml
-    
-    sed "s/IMG_REGISTRY/harbor.vmtanzu.com\/$2/g" runtime-configs/tpk8s/tanzu-config/build-plan.yml > .tanzu//build-plan.yml
-
+    $SED_INPLACE_COMMAND "s|IMG_REGISTRY|harbor.vmtanzu.com\/$2|" .tanzu//build-plan.yml
+        
     sed "s/APP_NAME/$APP_NAME/g" runtime-configs/tpk8s/tanzu-config/spring-metal.yml > .tanzu/config/spring-metal.yml
+    
     sed "s/APP_NAME/$APP_NAME/g" runtime-configs/tpk8s/tanzu-config/httproute.yml > .tanzu/config/httproute.yml
-   
-
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        SED_INPLACE_COMMAND="sed -i.bak"
-    else
-        SED_INPLACE_COMMAND="sed -i"
-    fi
       
-    sed "s/CHAT_MODEL_CAPABILITIES/$CHAT_MODEL_CAPABILITIES/" runtime-configs/tpk8s/tanzu-config/genai-external-service.yml > .tanzu/config/genai-external-service.yml
+    sed "s/APP_NAME/$APP_NAME/" runtime-configs/tpk8s/tanzu-config/genai-external-service.yml > .tanzu/config/genai-external-service.yml
+    $SED_INPLACE_COMMAND "s|CHAT_MODEL_CAPABILITIES|$CHAT_MODEL_CAPABILITIES|" .tanzu/config/genai-external-service.yml 
+    $SED_INPLACE_COMMAND "s|CHAT_SERVICE_NAME|$CHAT_SERVICE_NAME|" .tanzu/config/genai-external-service.yml 
     $SED_INPLACE_COMMAND "s|CHAT_MODEL_NAME|$CHAT_MODEL_NAME|" .tanzu/config/genai-external-service.yml 
     $SED_INPLACE_COMMAND "s|CHAT_API_URL|$CHAT_API_URL|" .tanzu/config/genai-external-service.yml 
     $SED_INPLACE_COMMAND "s|CHAT_API_KEY|$CHAT_API_KEY|" .tanzu/config/genai-external-service.yml 
     $SED_INPLACE_COMMAND "s/EMBED_MODEL_CAPABILITIES/$EMBED_MODEL_CAPABILITIES/" .tanzu/config/genai-external-service.yml 
+    $SED_INPLACE_COMMAND "s|EMBEDDINGS_SERVICE_NAME|$EMBEDDINGS_SERVICE_NAME|" .tanzu/config/genai-external-service.yml 
     $SED_INPLACE_COMMAND "s|EMBED_MODEL_NAME|$EMBED_MODEL_NAME|" .tanzu/config/genai-external-service.yml 
     $SED_INPLACE_COMMAND "s|EMBED_API_URL|$EMBED_API_URL|" .tanzu/config/genai-external-service.yml 
     $SED_INPLACE_COMMAND "s|EMBED_API_KEY|$EMBED_API_KEY|" .tanzu/config/genai-external-service.yml 
+
     
     sed "s/APP_NAME/$APP_NAME/" runtime-configs/tpk8s/tanzu-config/genai-service-binding.yml > .tanzu/config/genai-service-binding.yml
+    $SED_INPLACE_COMMAND "s|CHAT_SERVICE_NAME|$CHAT_SERVICE_NAME|" .tanzu/config/genai-service-binding.yml 
+    $SED_INPLACE_COMMAND "s|EMBEDDINGS_SERVICE_NAME|$EMBEDDINGS_SERVICE_NAME|" .tanzu/config/genai-service-binding.yml
+    
+   
+    sed "s/APP_NAME/$APP_NAME/" runtime-configs/tpk8s/tanzu-config/postgres-external-service.yml > .tanzu/config/posgres-external-service.yml
+    $SED_INPLACE_COMMAND "s|PGVECTOR_SERVICE_NAME|$PGVECTOR_SERVICE_NAME|" .tanzu/config/posgres-external-service.yml
+    $SED_INPLACE_COMMAND "s/PGVECTOR_HOST/$PGVECTOR_HOST/" .tanzu/config/posgres-external-service.yml
+    $SED_INPLACE_COMMAND "s/PGVECTOR_PORT/$PGVECTOR_PORT/" .tanzu/config/posgres-external-service.yml
+    $SED_INPLACE_COMMAND "s/PGVECTOR_USERNAME/$PGVECTOR_USERNAME/" .tanzu/config/posgres-external-service.yml
+    $SED_INPLACE_COMMAND "s|PGVECTOR_PASSWORD|$PGVECTOR_PASSWORD|" .tanzu/config/posgres-external-service.yml
 
-    sed "s/PGVECTOR_HOST/$PGVECTOR_HOST/" runtime-configs/tpk8s/tanzu-config/postgres-external-service.yml > .tanzu/config/postgres-external-service.yml
-    $SED_INPLACE_COMMAND "s/PGVECTOR_PORT/$PGVECTOR_PORT/" .tanzu/config/postgres-external-service.yml
-    $SED_INPLACE_COMMAND "s/PGVECTOR_USERNAME/$PGVECTOR_USERNAME/" .tanzu/config/postgres-external-service.yml
-    $SED_INPLACE_COMMAND "s|PGVECTOR_PASSWORD|$PGVECTOR_PASSWORD|" .tanzu/config/postgres-external-service.yml
+    sed "s/APP_NAME/$APP_NAME/" runtime-configs/tpk8s/tanzu-config/postgres-service-binding.yml > .tanzu/config/posgres-service-binding.yml
+    $SED_INPLACE_COMMAND "s|PGVECTOR_SERVICE_NAME|$PGVECTOR_SERVICE_NAME|" .tanzu/config/posgres-service-binding.yml 
 
-    sed "s/APP_NAME/$APP_NAME/" runtime-configs/tpk8s/tanzu-config/postgres-service-binding.yml > .tanzu/config/postgres-service-binding.yml
-
+    rm .tanzu/*.bak
     rm .tanzu/config/*.bak
 
     ;;
@@ -119,8 +128,8 @@ deploy-cf)
     echo && printf "\e[37mℹ️  Binding services ...\e[m\n" && echo
 
     cf bind-service $APP_NAME $PGVECTOR_SERVICE_NAME
-    cf bind-service $APP_NAME $GENAI_CHAT_SERVICE_NAME
-    cf bind-service $APP_NAME $GENAI_EMBEDDINGS_SERVICE_NAME
+    cf bind-service $APP_NAME $CHAT_SERVICE_NAME
+    cf bind-service $APP_NAME $EMBEDDINGS_SERVICE_NAME
     cf start $APP_NAME
     ;;
 deploy-k8s)
@@ -130,8 +139,8 @@ deploy-k8s)
     ;;
 cleanup)
     cf delete-service $PGVECTOR_SERVICE_NAME -f
-    cf delete-service $GENAI_CHAT_SERVICE_NAME -f
-    cf delete-service $GENAI_EMBEDDINGS_SERVICE_NAME -f
+    cf delete-service $CHAT_SERVICE_NAME -f
+    cf delete-service $EMBEDDINGS_SERVICE_NAME -f
     cf delete $APP_NAME -f -r
     ;;
 *)

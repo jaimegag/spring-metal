@@ -1,15 +1,15 @@
 apiVersion: services.tanzu.vmware.com/v1
 kind: ServiceBinding
 metadata:
-  name: private-chat-APP_NAME
+  name: CHAT_SERVICE_NAME-APP_NAME
   namespace: default
 spec:
-  alias: ai-chat
+  alias: CHAT_SERVICE_NAME
   serviceRef:
     apiGroup: services.tanzu.vmware.com
     connectorName: main
     kind: PreProvisionedService
-    name: private-chat
+    name: CHAT_SERVICE_NAME
   targetRef:
     apiGroup: apps.tanzu.vmware.com
     kind: ContainerApp
@@ -19,15 +19,15 @@ spec:
 apiVersion: services.tanzu.vmware.com/v1
 kind: ServiceBinding
 metadata:
-  name: private-embed-APP_NAME
+  name: EMBEDDINGS_SERVICE_NAME-APP_NAME
   namespace: default
 spec:
-  alias: ai-embed
+  alias: EMBEDDINGS_SERVICE_NAME
   serviceRef:
     apiGroup: services.tanzu.vmware.com
     connectorName: main
     kind: PreProvisionedService
-    name: private-embeddings
+    name: EMBEDDINGS_SERVICE_NAME
   targetRef:
     apiGroup: apps.tanzu.vmware.com
     kind: ContainerApp

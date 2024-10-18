@@ -9,18 +9,18 @@ data:
   type: cG9zdGdyZXNxbAo= # postgresql
 kind: Secret
 metadata:
-  name: vector-db-creds
+  name: PGVECTOR_SERVICE_NAME-creds
 type: servicebinding.io/postgresql
 
 ---
 apiVersion: services.tanzu.vmware.com/v1
 kind: PreProvisionedService
 metadata:
-  name: vector-db
+  name: PGVECTOR_SERVICE_NAME
 spec:
   bindingConnectors:
   - name: main
     description: Posgres pgvector service for AI use cases
     type: postgresql
     secretRef:
-      name: vector-db-creds
+      name: PGVECTOR_SERVICE_NAME-creds

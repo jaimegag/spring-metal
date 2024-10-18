@@ -1,15 +1,15 @@
 apiVersion: services.tanzu.vmware.com/v1
 kind: ServiceBinding
 metadata:
-  name: vector-db-APP_NAME
+  name: PGVECTOR_SERVICE_NAME-APP_NAME
   namespace: default
 spec:
-  alias: db
+  alias: PGVECTOR_SERVICE_NAME
   serviceRef:
     apiGroup: services.tanzu.vmware.com
     connectorName: main
     kind: PreProvisionedService
-    name: vector-db
+    name: PGVECTOR_SERVICE_NAME
   targetRef:
     apiGroup: apps.tanzu.vmware.com
     kind: ContainerApp
