@@ -39,6 +39,12 @@ prepare-cf)
  
     ;;
 prepare-k8s)
+    
+    if [[ "$2" == "" ]]; then
+        echo && printf "\e[31m⏹  Please provide your registry name at harbor.vmtanzu.com \e[m\n" && echo
+        exit
+    fi
+    
     echo && printf "\e[35m▶ Creating service keys for GenAI and Postgres \e[m\n" && echo
 
     cf create-service-key $PGVECTOR_SERVICE_NAME external-binding
@@ -71,6 +77,7 @@ prepare-k8s)
     mkdir -p .tanzu/config
 
     sed "s/APP_NAME/$APP_NAME/g" runtime-configs/tpk8s/tanzu-config/build-plan.yml > .tanzu//build-plan.yml
+    
     sed "s/IMG_REGISTRY/harbor.vmtanzu.com\/$2/g" runtime-configs/tpk8s/tanzu-config/build-plan.yml > .tanzu//build-plan.yml
 
     sed "s/APP_NAME/$APP_NAME/g" runtime-configs/tpk8s/tanzu-config/spring-metal.yml > .tanzu/config/spring-metal.yml
@@ -128,6 +135,6 @@ cleanup)
     cf delete $APP_NAME -f -r
     ;;
 *)
-    echo && printf "\e[31m⏹  Usage: prepare-cf/prepare-k8s/deploy-cf/deploy-k8s/cleanup \e[m\n" && echo
+    echo && printf "\e[31m⏹  Usage: prepare-cf/prepare-k8s registry /deploy-cf/deploy-k8s/cleanup \e[m\n" && echo
     ;;
 esac
