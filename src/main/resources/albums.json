@@ -12,9 +12,9 @@
         "_class": "org.cloudfoundry.samples.music.domain.Album",
         "artist": "Black Sabbath",
         "title": "Paranoid",
-        "releaseYear": "",
+        "releaseYear": "1970",
         "genre": "Heavy Metal",
-        "userReview": "1975",
+        "userReview": "",
         "userScore": ""
     },
     {
@@ -84,9 +84,9 @@
         "_class": "org.cloudfoundry.samples.music.domain.Album",
         "artist": "Rainbow",
         "title": "Ritchie Blackmore's Rainbow",
-        "releaseYear": "",
+        "releaseYear": "1975",
         "genre": "Hard Rock",
-        "userReview": "1975",
+        "userReview": "",
         "userScore": ""
     }
 ]
