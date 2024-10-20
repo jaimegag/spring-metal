@@ -26,7 +26,7 @@ prepare-cf)
 
     echo && printf "\e[37mℹ️  Creating services ...\e[m\n" && echo
 
-    cf create-service postgres $PGVECTOR_PLAN_NAME $PGVECTOR_SERVICE_NAME -c "{\"cf \": true}" -w
+    cf create-service postgres $PGVECTOR_PLAN_NAME $PGVECTOR_SERVICE_NAME -c "{\"svc_gw_enable\": true}" -w
 	printf "Waiting for service $PGVECTOR_SERVICE_NAME to create."
 	while [ `cf services | grep 'in progress' | wc -l | sed 's/ //g'` != 0 ]; do
   		printf "."
