@@ -26,7 +26,7 @@ prepare-cf)
 
     echo && printf "\e[37mℹ️  Creating services ...\e[m\n" && echo
 
-    cf create-service postgres $PGVECTOR_PLAN_NAME $PGVECTOR_SERVICE_NAME -c "{\"svc_gw_enable\": true}" -w
+    cf create-service postgres $PGVECTOR_PLAN_NAME $PGVECTOR_SERVICE_NAME -c "{\"cf \": true}" -w
 	printf "Waiting for service $PGVECTOR_SERVICE_NAME to create."
 	while [ `cf services | grep 'in progress' | wc -l | sed 's/ //g'` != 0 ]; do
   		printf "."
@@ -104,15 +104,15 @@ prepare-k8s)
     $SED_INPLACE_COMMAND "s|EMBEDDINGS_SERVICE_NAME|$EMBEDDINGS_SERVICE_NAME|" .tanzu/config/genai-service-binding.yml
     
    
-    sed "s/APP_NAME/$APP_NAME/" runtime-configs/tpk8s/tanzu-config/postgres-external-service.yml > .tanzu/config/posgres-external-service.yml
-    $SED_INPLACE_COMMAND "s|PGVECTOR_SERVICE_NAME|$PGVECTOR_SERVICE_NAME|" .tanzu/config/posgres-external-service.yml
-    $SED_INPLACE_COMMAND "s/PGVECTOR_HOST/$PGVECTOR_HOST/" .tanzu/config/posgres-external-service.yml
-    $SED_INPLACE_COMMAND "s/PGVECTOR_PORT/$PGVECTOR_PORT/" .tanzu/config/posgres-external-service.yml
-    $SED_INPLACE_COMMAND "s/PGVECTOR_USERNAME/$PGVECTOR_USERNAME/" .tanzu/config/posgres-external-service.yml
-    $SED_INPLACE_COMMAND "s|PGVECTOR_PASSWORD|$PGVECTOR_PASSWORD|" .tanzu/config/posgres-external-service.yml
+    sed "s/APP_NAME/$APP_NAME/" runtime-configs/tpk8s/tanzu-config/postgres-external-service.yml > .tanzu/config/postgres-external-service.yml
+    $SED_INPLACE_COMMAND "s|PGVECTOR_SERVICE_NAME|$PGVECTOR_SERVICE_NAME|" .tanzu/config/postgres-external-service.yml
+    $SED_INPLACE_COMMAND "s/PGVECTOR_HOST/$PGVECTOR_HOST/" .tanzu/config/postgres-external-service.yml
+    $SED_INPLACE_COMMAND "s/PGVECTOR_PORT/$PGVECTOR_PORT/" .tanzu/config/postgres-external-service.yml
+    $SED_INPLACE_COMMAND "s/PGVECTOR_USERNAME/$PGVECTOR_USERNAME/" .tanzu/config/postgres-external-service.yml
+    $SED_INPLACE_COMMAND "s|PGVECTOR_PASSWORD|$PGVECTOR_PASSWORD|" .tanzu/config/postgres-external-service.yml
 
-    sed "s/APP_NAME/$APP_NAME/" runtime-configs/tpk8s/tanzu-config/postgres-service-binding.yml > .tanzu/config/posgres-service-binding.yml
-    $SED_INPLACE_COMMAND "s|PGVECTOR_SERVICE_NAME|$PGVECTOR_SERVICE_NAME|" .tanzu/config/posgres-service-binding.yml 
+    sed "s/APP_NAME/$APP_NAME/" runtime-configs/tpk8s/tanzu-config/postgres-service-binding.yml > .tanzu/config/postgres-service-binding.yml
+    $SED_INPLACE_COMMAND "s|PGVECTOR_SERVICE_NAME|$PGVECTOR_SERVICE_NAME|" .tanzu/config/postgres-service-binding.yml 
 
     rm .tanzu/*.bak
     rm .tanzu/config/*.bak
