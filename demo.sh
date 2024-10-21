@@ -11,7 +11,8 @@ CHAT_PLAN_NAME="chat-test-compute-constraint" # plan must have chat capabilty
 EMBEDDINGS_SERVICE_NAME="boneyard-embeddings" 
 EMBEDDINGS_PLAN_NAME="embeddings-test" # plan must have Embeddings capabilty
 
-BASE_APP_NAME="spring-metal-base" #if you want to demo in two phases, no ai and then "adding" AI assist, this would be the app name prior to add the AI assist
+BASE_APP_NAME="spring-metal" #if you want to demo in two phases, no ai and then "adding" AI assist, this would be the app name prior to add the AI assist
+BASE_APP_DB="music-db" #if you want to demo in two phases, no ai and then "adding" AI assist, this would be the app name prior to add the AI assist
 
 #prepare k8s
 prepare-k8s() {
@@ -98,16 +99,17 @@ prepare-k8s() {
 
 #create-db-service
 create-db-service () {
-    echo && printf "\e[37mℹ️  Create $PGVECTOR_SERVICE_NAME service ...\e[m\n" && echo
+    dbname=$1
+    echo && printf "\e[37mℹ️  Create $dbname service ...\e[m\n" && echo
 
-    cf create-service postgres $PGVECTOR_PLAN_NAME $PGVECTOR_SERVICE_NAME -c "{\"svc_gw_enable\": true}" -w
-	printf "Waiting for service $PGVECTOR_SERVICE_NAME to create."
+    cf create-service postgres $PGVECTOR_PLAN_NAME $dbname -c "{\"svc_gw_enable\": true}" -w
+	printf "Waiting for service $dbname to create."
 	while [ `cf services | grep 'in progress' | wc -l | sed 's/ //g'` != 0 ]; do
   		printf "."
   		sleep 5
 	done
 
-	echo "$PGVECTOR_SERVICE_NAME creation completed."
+	echo "$dbname creation completed."
 }
 
 #create-ai-services
@@ -124,7 +126,7 @@ deploy-cf () {
     cp src/main/resources/static/index_with_ai.html src/main/resources/static/index.html  
     mvn clean package -DskipTests
   	
-    create-db-service
+    create-db-service $PGVECTOR_SERVICE_NAME
     create-ai-services
 
     echo && printf "\e[37mℹ️  Deploying $APP_NAME application ...\e[m\n" && echo
@@ -145,7 +147,7 @@ deploy-cf-no-ai () {
     mvn clean package -DskipTests
     cp src/main/resources/static/index_with_ai.html src/main/resources/static/index.html
 
-    create-db-service
+    create-db-service $BASE_APP_DB
 
     cf push $BASE_APP_NAME -f runtime-configs/tpcf/manifest.yml --no-start
     cf bind-service $BASE_APP_NAME $PGVECTOR_SERVICE_NAME
@@ -164,6 +166,7 @@ deploy-k8s () {
 cleanup () {
 
     cf delete-service $PGVECTOR_SERVICE_NAME -f
+    cf delete-service $BASE_APP_DB -f
     cf delete-service $CHAT_SERVICE_NAME -f
     cf delete-service $EMBEDDINGS_SERVICE_NAME -f
     cf delete $APP_NAME -f -r

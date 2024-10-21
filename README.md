@@ -60,13 +60,9 @@ note: AI and db external services are bound as part of the deployment. You can b
 
 ### Troubleshooting
 
-#### Issue: Problem with external service binding.
-- **Solution:** Ensure that all credentials and connection details in `.tanzu/config/services` are correct and updated.
+#### Issue: Application deployment fails, or stuck in 'deploying'
+- **Solution:** In AppsMan, vector db service instance, setting screan: manually enter ```"svc_gw_enable":true``` in the json area and redeploy
 
-#### Issue: Application deployment fails.
-- **Solution:** Check the build output for errors and verify the Tanzu configuration settings.
-
-Browse your application through the app ingress link provided in the Space UI after deployment.
 
 ## Contributing
 Contributions to this project are welcome. Please ensure to follow the existing coding style and add unit tests for any new or changed functionality.
