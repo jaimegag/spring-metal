@@ -145,10 +145,28 @@
     },
     {
         "_class": "org.cloudfoundry.samples.music.domain.Album",
-        "artist": "Nirvana",
-        "title": "Nevermind",
-        "releaseYear": "1991",
-        "genre": "Grunge",
+        "artist": "Pink Floyd",
+        "title": "The Dark Side of the Moon",
+        "releaseYear": "1973",
+        "genre": "Progressive rock",
+        "userReview": "",
+        "userScore": ""
+    },
+    {
+        "_class": "org.cloudfoundry.samples.music.domain.Album",
+        "artist": "Pink Floyd",
+        "title": "Wish You Were Here",
+        "releaseYear": "1975",
+        "genre": "Progressive rock",
+        "userReview": "",
+        "userScore": ""
+    },
+    {
+        "_class": "org.cloudfoundry.samples.music.domain.Album",
+        "artist": "Pink Floyd",
+        "title": "Animals",
+        "releaseYear": "1977",
+        "genre": "Progressive rock",
         "userReview": "",
         "userScore": ""
     },

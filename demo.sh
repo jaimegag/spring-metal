@@ -164,6 +164,7 @@ cleanup () {
     cf delete-service $CHAT_SERVICE_NAME -f
     cf delete-service $EMBEDDINGS_SERVICE_NAME -f
     cf delete $APP_NAME -f -r
+    cf delete $APP_NAME_NAME -f -r
 }
 
 #incorrect usage
