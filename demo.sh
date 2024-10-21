@@ -18,7 +18,9 @@ prepare-cf() {
 
     echo && printf "\e[37mℹ️  Building $APP_NAME ...\e[m\n" && echo
 
+    cp src/main/resources/static/index_with_ai.html src/main/resources/static/index.html  
     mvn clean package -DskipTests
+    
 
     echo && printf "\e[37mℹ️  Creating services ...\e[m\n" && echo
 
@@ -141,7 +143,7 @@ deploy-cf-no-ai () {
     cp src/main/resources/static/index_no_ai.html src/main/resources/static/index.html  
     mvn clean package -DskipTests
     cp src/main/resources/static/index_with_ai.html src/main/resources/static/index.html
-    
+
     cf push $BASE_APP_NAME -f runtime-configs/tpcf/manifest.yml --no-start
     cf bind-service $BASE_APP_NAME $PGVECTOR_SERVICE_NAME
     cf start $BASE_APP_NAME
