@@ -17,59 +17,32 @@ This repository contains artifacts necessary to build and run generative AI appl
 - Configured egress settings (closed by default) to connect to external services.
 
 
-## Installation
-
-### Cloud Foundry Runtime
-
-#### Preperations
-Update the following in ```demo.sh``` according to your TPCF configurations
-
-```bash
-PGVECTOR_SERVICE_NAME="vector-db"
-PGVECTOR_PLAN_NAME="on-demand-postgres-db"
-PGVECTOR_EXTERNAL_PORT=1025 # Need TCP Router on the TPCF foundation enabled, and Service Gateways on the Postgres tile enabled.  Choose an available port 
-
-GENAI_CHAT_SERVICE_NAME="genai-chat" 
-GENAI_CHAT_PLAN_NAME="dev-chat" # plan must have chat capabilty
-
-GENAI_EMBEDDINGS_SERVICE_NAME="genai-embed" 
-GENAI_EMBEDDINGS_PLAN_NAME="dev-embeddings" # plan must have Embeddings capabilty
-```
-
-Run the prepare script to build spring-metal and create all services
-
-```bash
-cf login -u admin -p YOUR_CF_ADMIN_PASSWORD
-cf target -o YOUR_ORG -s YOUR_SPACE
-
-./demo.sh prepare-cf
-```
-
-#### Deployment
-
-Run the deploy script to push spring-metal and bind all services
-
-```bash
-cf login -u admin -p YOUR_CF_ADMIN_PASSWORD
-cf target -o YOUR_ORG -s YOUR_SPACE
-
-./demo.sh deploy-cf
-```
-  
-### Kubernetes Runtime
+## Running the Demo
 
 #### Preperations
 
-- Ensure the CF runtime services are installed and your CF CLI is targeted to the org/space you used above.
-- Ensure you're logged into the tanzu platform and your kubernetes context is set to your space
-- Template the Kubernetes services and bindings
+- Update the parameters in ```demo.sh``` according to your TPCF configurations
 
+- cf runtime
+```bash
+cf login -u admin -p YOUR_CF_ADMIN_PASSWORD
+cf target -o YOUR_ORG -s YOUR_SPACE //this space musy have acces to postgres and genai services
+```
+- k8s runtime
 ```bash
 tanzu build config --build-plan-source-type=file  --build-plan-source [FULL PATH TO spring-metal folder]/.tanzu/build-plan.yml
 ./demo.sh prepare-k8s [YOUR REGISTERY at harbor.vmtanzu.com]
 ```
 
-#### Build and Deploy 
+#### Deployment
+
+- cf runtime
+```bash
+cf login -u admin -p YOUR_CF_ADMIN_PASSWORD
+cf target -o YOUR_ORG -s YOUR_SPACE
+./demo.sh deploy-cf
+```
+- k8s runtime  
 ```bash
 tanzu login
 tanzu context use <my-context>

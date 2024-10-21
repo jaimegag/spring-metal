@@ -2,7 +2,7 @@
 
 APP_NAME="boneyard-assist" # overridable, necessary for TPK8s ingress route
 
-PGVECTOR_SERVICE_NAME="boneyard-db-vector"
+PGVECTOR_SERVICE_NAME="boneyard-db"
 PGVECTOR_PLAN_NAME="on-demand-postgres-db"
 
 CHAT_SERVICE_NAME="boneyard-chat" 
@@ -12,33 +12,6 @@ EMBEDDINGS_SERVICE_NAME="boneyard-embeddings"
 EMBEDDINGS_PLAN_NAME="embeddings-test" # plan must have Embeddings capabilty
 
 BASE_APP_NAME="spring-metal-base" #if you want to demo in two phases, no ai and then "adding" AI assist, this would be the app name prior to add the AI assist
-
-#prepare cf
-prepare-cf() {
-
-    echo && printf "\e[37mℹ️  Building $APP_NAME ...\e[m\n" && echo
-
-    cp src/main/resources/static/index_with_ai.html src/main/resources/static/index.html  
-    mvn clean package -DskipTests
-    
-
-    echo && printf "\e[37mℹ️  Creating services ...\e[m\n" && echo
-
-    cf create-service postgres $PGVECTOR_PLAN_NAME $PGVECTOR_SERVICE_NAME -c "{\"svc_gw_enable\": true}" -w
-	printf "Waiting for service $PGVECTOR_SERVICE_NAME to create."
-	while [ `cf services | grep 'in progress' | wc -l | sed 's/ //g'` != 0 ]; do
-  		printf "."
-  		sleep 5
-	done
-
-	echo "$PGVECTOR_SERVICE_NAME creation completed."
- 
-	echo && printf "\e[37mℹ️  Creating $CHAT_SERVICE_NAME and $EMBEDDINGS_SERVICE_NAME GenAI services ...\e[m\n" && echo
-
-    cf create-service genai $CHAT_PLAN_NAME $CHAT_SERVICE_NAME 
-    cf create-service genai $EMBEDDINGS_PLAN_NAME $EMBEDDINGS_SERVICE_NAME 
- 
-}
 
 #prepare k8s
 prepare-k8s() {
@@ -123,8 +96,36 @@ prepare-k8s() {
     rm .tanzu/config/*.bak
 }
 
+#create-db-service
+create-db-service () {
+    echo && printf "\e[37mℹ️  Create $PGVECTOR_SERVICE_NAME service ...\e[m\n" && echo
+
+    cf create-service postgres $PGVECTOR_PLAN_NAME $PGVECTOR_SERVICE_NAME -c "{\"svc_gw_enable\": true}" -w
+	printf "Waiting for service $PGVECTOR_SERVICE_NAME to create."
+	while [ `cf services | grep 'in progress' | wc -l | sed 's/ //g'` != 0 ]; do
+  		printf "."
+  		sleep 5
+	done
+
+	echo "$PGVECTOR_SERVICE_NAME creation completed."
+}
+
+#create-ai-services
+create-ai-services () {
+    echo && printf "\e[37mℹ️  Creating $CHAT_SERVICE_NAME and $EMBEDDINGS_SERVICE_NAME GenAI services ...\e[m\n" && echo
+
+    cf create-service genai $CHAT_PLAN_NAME $CHAT_SERVICE_NAME 
+    cf create-service genai $EMBEDDINGS_PLAN_NAME $EMBEDDINGS_SERVICE_NAME 
+}
+
 #deploy cf 
 deploy-cf () {
+
+    cp src/main/resources/static/index_with_ai.html src/main/resources/static/index.html  
+    mvn clean package -DskipTests
+  	
+    create-db-service
+    create-ai-services
 
     echo && printf "\e[37mℹ️  Deploying $APP_NAME application ...\e[m\n" && echo
     cf push $APP_NAME -f runtime-configs/tpcf/manifest.yml --no-start
@@ -143,6 +144,8 @@ deploy-cf-no-ai () {
     cp src/main/resources/static/index_no_ai.html src/main/resources/static/index.html  
     mvn clean package -DskipTests
     cp src/main/resources/static/index_with_ai.html src/main/resources/static/index.html
+
+    create-db-service
 
     cf push $BASE_APP_NAME -f runtime-configs/tpcf/manifest.yml --no-start
     cf bind-service $BASE_APP_NAME $PGVECTOR_SERVICE_NAME
@@ -172,7 +175,6 @@ incorrect-usage() {
         
      echo && printf "\e[31m⏹ Incorrect usage. Please specify one of the following: \e[m\n"
      echo
-     echo "  prepare-cf"
      echo "  prepare-k8s [registry name at harbor.vmtanzu.com]"
      echo "  deploy-cf"
      echo "  deploy-cf-no-ai"
@@ -183,9 +185,6 @@ incorrect-usage() {
 }
 #################### main ##########################
 case $1 in
-prepare-cf)
-    prepare-cf
-    ;;
 prepare-k8s)
     if [[ "$2" == "" ]]; then incorrect-usage ; fi
     prepare-k8s $2
