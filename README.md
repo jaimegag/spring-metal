@@ -61,7 +61,7 @@ note: AI and db external services are bound as part of the deployment. You can b
 ### Troubleshooting
 
 #### Issue: Application deployment fails, or stuck in 'deploying'
-- **Solution:** In AppsMan, vector db service instance, setting screan: manually enter ```"svc_gw_enable":true``` in the json area and redeploy
+- **Solution:** In AppsMan->YOUR_SPACE->services->vector db instance->settings: manually enter ```"svc_gw_enable":true``` in the json area and redeploy
 
 
 ## Contributing
