@@ -150,7 +150,7 @@ deploy-cf-no-ai () {
     create-db-service $BASE_APP_DB
 
     cf push $BASE_APP_NAME -f runtime-configs/tpcf/manifest.yml --no-start
-    cf bind-service $BASE_APP_NAME $PGVECTOR_SERVICE_NAME
+    cf bind-service $BASE_APP_NAME $BASE_APP_DB
     cf start $BASE_APP_NAME
     
 }
