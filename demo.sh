@@ -139,10 +139,13 @@ deploy-cf () {
 deploy-cf-no-ai () {
     
     cp src/main/resources/static/index_no_ai.html src/main/resources/static/index.html  
+    mvn clean package -DskipTests
+    cp src/main/resources/static/index_with_ai.html src/main/resources/static/index.html
+    
     cf push $BASE_APP_NAME -f runtime-configs/tpcf/manifest.yml --no-start
     cf bind-service $BASE_APP_NAME $PGVECTOR_SERVICE_NAME
     cf start $BASE_APP_NAME
-    cp src/main/resources/static/index_with_ai.html src/main/resources/static/index.html
+    
 }
 
 #deploy k8s
