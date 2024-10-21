@@ -2,7 +2,7 @@
 
 APP_NAME="boneyard-assist" # overridable, necessary for TPK8s ingress route
 
-PGVECTOR_SERVICE_NAME="boneyard-db"
+PGVECTOR_SERVICE_NAME="boneyard-db-vector"
 PGVECTOR_PLAN_NAME="on-demand-postgres-db"
 
 CHAT_SERVICE_NAME="boneyard-chat" 
@@ -12,7 +12,7 @@ EMBEDDINGS_SERVICE_NAME="boneyard-embeddings"
 EMBEDDINGS_PLAN_NAME="embeddings-test" # plan must have Embeddings capabilty
 
 BASE_APP_NAME="spring-metal" #if you want to demo in two phases, no ai and then "adding" AI assist, this would be the app name prior to add the AI assist
-BASE_APP_DB="music-db" #if you want to demo in two phases, no ai and then "adding" AI assist, this would be the app name prior to add the AI assist
+BASE_APP_DB="boneyard-db" #if you want to demo in two phases, no ai and then "adding" AI assist, this would be the app name prior to add the AI assist
 
 #prepare k8s
 prepare-k8s() {
