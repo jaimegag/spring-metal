@@ -46,6 +46,15 @@
     },
     {
         "_class": "org.cloudfoundry.samples.music.domain.Album",
+        "artist": "Metallica",
+        "title": "Ride the Lightning",
+        "releaseYear": "1984",
+        "genre": "Heavy Metal",
+        "userReview": "",
+        "userScore": ""
+    },
+    {
+        "_class": "org.cloudfoundry.samples.music.domain.Album",
         "artist": "Iron Maiden",
         "title": "The Number of the Beast",
         "releaseYear": "1982",
@@ -88,5 +97,104 @@
         "genre": "Hard Rock",
         "userReview": "",
         "userScore": ""
-    }
+    },
+    {
+        "_class": "org.cloudfoundry.samples.music.domain.Album",
+        "artist": "Rush",
+        "title": "2121",
+        "releaseYear": "1976",
+        "genre": "Progressive Rock",
+        "userReview": "",
+        "userScore": ""
+    },
+    {
+        "_class": "org.cloudfoundry.samples.music.domain.Album",
+        "artist": "Led Zeppelin",
+        "title": "Led Zeppelin I",
+        "releaseYear": "1969",
+        "genre": "Blues Rock",
+        "userReview": "",
+        "userScore": ""
+    },
+    {
+        "_class": "org.cloudfoundry.samples.music.domain.Album",
+        "artist": "Led Zeppelin",
+        "title": "Led Zeppelin II",
+        "releaseYear": "1969",
+        "genre": "Blues Rock",
+        "userReview": "",
+        "userScore": ""
+    },
+    {
+        "_class": "org.cloudfoundry.samples.music.domain.Album",
+        "artist": "Led Zeppelin",
+        "title": "Led Zeppelin III",
+        "releaseYear": "1970",
+        "genre": "Blues Rock",
+        "userReview": "",
+        "userScore": ""
+    },
+    {
+        "_class": "org.cloudfoundry.samples.music.domain.Album",
+        "artist": "Nirvana",
+        "title": "Nevermind",
+        "releaseYear": "1991",
+        "genre": "Grunge",
+        "userReview": "",
+        "userScore": ""
+    },
+    {
+        "_class": "org.cloudfoundry.samples.music.domain.Album",
+        "artist": "Nirvana",
+        "title": "Nevermind",
+        "releaseYear": "1991",
+        "genre": "Grunge",
+        "userReview": "",
+        "userScore": ""
+    },
+    {
+        "_class": "org.cloudfoundry.samples.music.domain.Album",
+        "artist": "Deep Purple",
+        "title": "Stormbringer",
+        "releaseYear": "1974",
+        "genre": "Hard Rock",
+        "userReview": "",
+        "userScore": ""
+    },
+    {
+        "_class": "org.cloudfoundry.samples.music.domain.Album",
+        "artist": "Genesis",
+        "title": "Selling England by the Pound",
+        "releaseYear": "1973",
+        "genre": "Progressive Rock",
+        "userReview": "",
+        "userScore": ""
+    },
+    {
+        "_class": "org.cloudfoundry.samples.music.domain.Album",
+        "artist": "King Crimson",
+        "title": "In the Court of the Crimson King",
+        "releaseYear": "1969",
+        "genre": "Progressive Rock",
+        "userReview": "",
+        "userScore": ""
+    },
+    {
+        "_class": "org.cloudfoundry.samples.music.domain.Album",
+        "artist": "Jethro Tull",
+        "title": "Aqualung",
+        "releaseYear": "1971",
+        "genre": "Progressive Rock",
+        "userReview": "",
+        "userScore": ""
+    },
+    {
+        "_class": "org.cloudfoundry.samples.music.domain.Album",
+        "artist": "Jethro Tull",
+        "title": "Thick as a Brick",
+        "releaseYear": "1972",
+        "genre": "Progressive Rock",
+        "userReview": "",
+        "userScore": ""
+    }   
 ]

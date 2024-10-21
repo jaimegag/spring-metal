@@ -2,24 +2,20 @@
 
 APP_NAME="boneyard-assist" # overridable, necessary for TPK8s ingress route
 
-PGVECTOR_SERVICE_NAME="vector-db"
+PGVECTOR_SERVICE_NAME="boneyard-db-vector"
 PGVECTOR_PLAN_NAME="on-demand-postgres-db"
 
-CHAT_SERVICE_NAME="genai-chat" 
+CHAT_SERVICE_NAME="boneyard-chat" 
 CHAT_PLAN_NAME="chat-test-compute-constraint" # plan must have chat capabilty
 
-EMBEDDINGS_SERVICE_NAME="genai-embeddings" 
+EMBEDDINGS_SERVICE_NAME="boneyard-embeddings" 
 EMBEDDINGS_PLAN_NAME="embeddings-test" # plan must have Embeddings capabilty
 
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    SED_INPLACE_COMMAND="sed -i.bak"
-else
-    SED_INPLACE_COMMAND="sed -i"
-fi
+BASE_APP_NAME="spring-metal-base" #if you want to demo in two phases, no ai and then "adding" AI assist, this would be the app name prior to add the AI assist
 
-case $1 in
-prepare-cf)
-    
+#prepare cf
+prepare-cf() {
+
     echo && printf "\e[37mℹ️  Building $APP_NAME ...\e[m\n" && echo
 
     mvn clean package -DskipTests
@@ -40,13 +36,20 @@ prepare-cf)
     cf create-service genai $CHAT_PLAN_NAME $CHAT_SERVICE_NAME 
     cf create-service genai $EMBEDDINGS_PLAN_NAME $EMBEDDINGS_SERVICE_NAME 
  
-    ;;
-prepare-k8s)
-    
-    if [[ "$2" == "" ]]; then
-        echo && printf "\e[31m⏹  Please provide your registry name at harbor.vmtanzu.com \e[m\n" && echo
-        exit
+}
+
+#prepare k8s
+prepare-k8s() {
+
+    registry_folder=$1
+
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        SED_INPLACE_COMMAND="sed -i.bak"
+    else
+        SED_INPLACE_COMMAND="sed -i"
     fi
+    
+    
     
     echo && printf "\e[35m▶ Creating service keys for GenAI and Postgres \e[m\n" && echo
 
@@ -80,7 +83,7 @@ prepare-k8s)
     mkdir -p .tanzu/config
 
     sed "s/APP_NAME/$APP_NAME/g" runtime-configs/tpk8s/tanzu-config/build-plan.yml > .tanzu//build-plan.yml
-    $SED_INPLACE_COMMAND "s|IMG_REGISTRY|harbor.vmtanzu.com\/$2|" .tanzu//build-plan.yml
+    $SED_INPLACE_COMMAND "s|IMG_REGISTRY|harbor.vmtanzu.com\/$registry_folder|" .tanzu//build-plan.yml
         
     sed "s/APP_NAME/$APP_NAME/g" runtime-configs/tpk8s/tanzu-config/spring-metal.yml > .tanzu/config/spring-metal.yml
     
@@ -116,11 +119,12 @@ prepare-k8s)
 
     rm .tanzu/*.bak
     rm .tanzu/config/*.bak
+}
 
-    ;;
-deploy-cf)
+#deploy cf 
+deploy-cf () {
 
-    echo && printf "\e[37mℹ️  Deploying spring-metal application ...\e[m\n" && echo
+    echo && printf "\e[37mℹ️  Deploying $APP_NAME application ...\e[m\n" && echo
     cf push $APP_NAME -f runtime-configs/tpcf/manifest.yml --no-start
 
     echo && printf "\e[37mℹ️  Binding services ...\e[m\n" && echo
@@ -129,19 +133,70 @@ deploy-cf)
     cf bind-service $APP_NAME $CHAT_SERVICE_NAME
     cf bind-service $APP_NAME $EMBEDDINGS_SERVICE_NAME
     cf start $APP_NAME
-    ;;
-deploy-k8s)
+}
+
+#deploy cf without ai assist
+deploy-cf-no-ai () {
+    
+    cp src/main/resources/static/index_no_ai.html src/main/resources/static/index.html  
+    cf push $BASE_APP_NAME -f runtime-configs/tpcf/manifest.yml --no-start
+    cf bind-service $BASE_APP_NAME $PGVECTOR_SERVICE_NAME
+    cf start $BASE_APP_NAME
+    cp src/main/resources/static/index_with_ai.html src/main/resources/static/index.html
+}
+
+#deploy k8s
+deploy-k8s () {
+
     echo && printf "\e[35m▶ tanzu deploy and bind \e[m\n" && echo
     tanzu deploy -y
-    
-    ;;
-cleanup)
+}    
+
+#cleanup
+cleanup () {
+
     cf delete-service $PGVECTOR_SERVICE_NAME -f
     cf delete-service $CHAT_SERVICE_NAME -f
     cf delete-service $EMBEDDINGS_SERVICE_NAME -f
     cf delete $APP_NAME -f -r
+}
+
+#incorrect usage
+incorrect-usage() {
+        
+     echo && printf "\e[31m⏹ Incorrect usage. Please specify one of the following: \e[m\n"
+     echo
+     echo "  prepare-cf"
+     echo "  prepare-k8s [registry name at harbor.vmtanzu.com]"
+     echo "  deploy-cf"
+     echo "  deploy-cf-no-ai"
+     echo "  deploy-k8s"
+     echo "  cleanup"
+     echo
+     exit
+}
+#################### main ##########################
+case $1 in
+prepare-cf)
+    prepare-cf
+    ;;
+prepare-k8s)
+    if [[ "$2" == "" ]]; then incorrect-usage ; fi
+    prepare-k8s $2
+    ;;
+deploy-cf)
+    deploy-cf
+    ;;
+deploy-cf-no-ai)
+    deploy-cf-no-ai
+    ;;
+deploy-k8s)
+    deploy-k8s
+    ;;
+cleanup)
+    cleanup
     ;;
 *)
-    echo && printf "\e[31m⏹  Usage: prepare-cf/prepare-k8s registry /deploy-cf/deploy-k8s/cleanup \e[m\n" && echo
+    incorrect-usage
     ;;
 esac
