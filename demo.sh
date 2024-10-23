@@ -6,10 +6,10 @@ PGVECTOR_SERVICE_NAME="boneyard-db-vector"
 PGVECTOR_PLAN_NAME="on-demand-postgres-db"
 
 CHAT_SERVICE_NAME="boneyard-chat" 
-CHAT_PLAN_NAME="chat-test-compute-constraint" # plan must have chat capabilty
+CHAT_PLAN_NAME="chat-dev" # plan must have chat capabilty
 
 EMBEDDINGS_SERVICE_NAME="boneyard-embeddings" 
-EMBEDDINGS_PLAN_NAME="embeddings-test" # plan must have Embeddings capabilty
+EMBEDDINGS_PLAN_NAME="embeddings-dev" # plan must have Embeddings capabilty
 
 BASE_APP_NAME="spring-metal" #if you want to demo in two phases, no ai and then "adding" AI assist, this would be the app name prior to add the AI assist
 BASE_APP_DB="boneyard-db" #if you want to demo in two phases, no ai and then "adding" AI assist, this would be the app name prior to add the AI assist
