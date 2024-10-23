@@ -30,8 +30,6 @@ cf target -o YOUR_ORG -s YOUR_SPACE //this space musy have acces to postgres and
 ```
 - k8s runtime
 
-important note: if you GenAI and PGvector services are consumed via TPCF, you must rung ```./demo.sh deploy-cf``` prior
-
 ```bash
 tanzu build config --build-plan-source-type=file  --build-plan-source [FULL PATH TO spring-metal folder]/.tanzu/build-plan.yml
 ./demo.sh prepare-k8s [YOUR REGISTERY at harbor.vmtanzu.com]

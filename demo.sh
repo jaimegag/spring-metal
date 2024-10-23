@@ -29,6 +29,7 @@ prepare-k8s() {
     
     echo && printf "\e[35m▶ Creating service keys for GenAI and Postgres \e[m\n" && echo
 
+    cf create-service-key $PGVECTOR_SERVICE_NAME external-binding
     PGVECTOR_GUID=$(cf service-key $PGVECTOR_SERVICE_NAME external-binding --guid)
     PGVECTOR_SERVICE_JSON=$(cf curl "/v3/service_credential_bindings/$PGVECTOR_GUID/details") 
     PGVECTOR_HOST=$(echo -n $PGVECTOR_SERVICE_JSON | jq -r -c '.credentials.service_gateway.host' | base64)
@@ -36,6 +37,7 @@ prepare-k8s() {
     PGVECTOR_USERNAME=$(echo -n $PGVECTOR_SERVICE_JSON | jq -r -c '.credentials.user' | base64)
     PGVECTOR_PASSWORD=$(echo -n $PGVECTOR_SERVICE_JSON | jq -r -c '.credentials.password'| base64)
 
+    cf create-service-key $CHAT_SERVICE_NAME external-binding
     CHAT_GUID=$(cf service-key $CHAT_SERVICE_NAME external-binding --guid)
     CHAT_SERVICE_JSON=$(cf curl "/v3/service_credential_bindings/$CHAT_GUID/details") 
     CHAT_MODEL_CAPABILITIES=$(echo -n $CHAT_SERVICE_JSON | jq -r -c '.credentials.model_capabilities| @csv' | sed 's/\"//g'| base64)
@@ -43,6 +45,7 @@ prepare-k8s() {
     CHAT_API_URL=$(echo -n $CHAT_SERVICE_JSON | jq -r -c '.credentials.api_base'| base64)
     CHAT_API_KEY=$(echo -n $CHAT_SERVICE_JSON | jq -r -c '.credentials.api_key'| base64)
 
+    cf create-service-key $EMBEDDINGS_SERVICE_NAME external-binding
     EMBED_GUID=$(cf service-key $EMBEDDINGS_SERVICE_NAME external-binding --guid)
     EMBED_SERVICE_JSON=$(cf curl "/v3/service_credential_bindings/$EMBED_GUID/details") 
     EMBED_MODEL_CAPABILITIES=$(echo -n $EMBED_SERVICE_JSON | jq -r -c '.credentials.model_capabilities| @csv' | sed 's/\"//g'| base64)
@@ -107,8 +110,6 @@ create-db-service () {
 	done
 
 	echo "$dbname creation completed."
-
-    cf create-service-key $dbname external-binding
 }
 
 #create-ai-services
@@ -116,9 +117,6 @@ create-ai-services () {
     echo && printf "\e[37mℹ️  Creating $CHAT_SERVICE_NAME and $EMBEDDINGS_SERVICE_NAME GenAI services ...\e[m\n" && echo
 
     cf create-service genai $CHAT_PLAN_NAME $CHAT_SERVICE_NAME 
-    cf create-service genai $EMBEDDINGS_PLAN_NAME $EMBEDDINGS_SERVICE_NAME 
-
-    cf create-service genai $EMBEDDINGS_PLAN_NAME $EMBEDDINGS_SERVICE_NAME 
     cf create-service genai $EMBEDDINGS_PLAN_NAME $EMBEDDINGS_SERVICE_NAME 
 }
 
