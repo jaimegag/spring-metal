@@ -15,9 +15,9 @@ spec:
     steps:
     - namedTask: tanzu-kubernetes-deployment
     - namedTask: tanzu-kubernetes-carvel-package
-    #- name: add-route
+    #- name: add-custom-scanning
     #  containerTask:
-    #    image: openso/add-http-route-task
+    #    image: dekt/customer-scanner
   - description: create kubernetes yaml files for deploying on kubernetes
     name: kubernetes-plain
     steps:
