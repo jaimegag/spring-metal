@@ -102,12 +102,8 @@ create-db-service () {
     dbname=$1
     echo && printf "\e[37mℹ️  Create $dbname service ...\e[m\n" && echo
 
-    cf create-service postgres $PGVECTOR_PLAN_NAME $dbname -c "{\"svc_gw_enable\": true}" -w
-	printf "Waiting for service $dbname to create."
-	while [ `cf services | grep 'in progress' | wc -l | sed 's/ //g'` != 0 ]; do
-  		printf "."
-  		sleep 5
-	done
+    cf create-service postgres $PGVECTOR_PLAN_NAME $dbname -w 
+    cf update-service $dbname -c "{\"svc_gw_enable\": true}" -w #workaround
 
 	echo "$dbname creation completed."
 }
